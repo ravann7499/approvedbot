@@ -1,37 +1,4 @@
-# (c) @RavanDeveloperr
-# Rkn Developer 
-# Don't Remove Credit 😔
-# Telegram Channel @RavanDeveloper & @Rkn_Botz
-# Developer @RavanDeveloperr
-# Special Thanks To (https://github.com/JayMahakal98)
-# Update Channel @Digital_Botz & @DigitalBotz_Support
 
-"""
-Apache License 2.0
-Copyright (c) 2022 @RavanDeveloper
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-Telegram Link : https://t.me/RknDeveloper
-Repo Link : https://github.com/RknDeveloper/Rkn_Auto-Request-Approve-bot
-License Link : https://github.com/RknDeveloper/Rkn_Auto-Request-Approve-bot/blob/main/LICENSE
-"""
-
-
-# pyrogram imports
 from pyrogram.types import Message
 from pyrogram import Client, filters
 from pyrogram.errors import FloodWait, InputUserDeactivated, UserIsBlocked, PeerIdInvalid
@@ -91,7 +58,8 @@ async def restart_bot(b, m):
     
 @Client.on_message(filters.command("broadcast") & filters.user(rkn1.ADMIN) & filters.reply)
 async def broadcast_handler(bot: Client, m: Message):
-    await bot.send_message(rkn1.LOG_CHANNEL, f"{m.from_user.mention} or {m.from_user.id} Iꜱ ꜱᴛᴀʀᴛᴇᴅ ᴛʜᴇ Bʀᴏᴀᴅᴄᴀꜱᴛ......")
+    if rkn1.LOG_CHANNEL:
+        await bot.send_message(rkn1.LOG_CHANNEL, f"{m.from_user.mention} or {m.from_user.id} Iꜱ ꜱᴛᴀʀᴛᴇᴅ ᴛʜᴇ Bʀᴏᴀᴅᴄᴀꜱᴛ......")
     all_users = await rkn_botz.get_all_users()
     broadcast_msg = m.reply_to_message
     sts_msg = await m.reply_text("Bʀᴏᴀᴅᴄᴀꜱᴛ Sᴛᴀʀᴛᴇᴅ..!") 
@@ -134,9 +102,3 @@ async def send_msg(user_id, message):
         logger.error(f"{user_id} : {e}")
         return 500
         
-
-# Rkn Developer 
-# Don't Remove Credit 😔
-# Telegram Channel @RavanDeveloper & @Rkn_Botz
-# Developer @RavanDeveloperr
-# Update Channel @Digital_Botz & @DigitalBotz_Support
