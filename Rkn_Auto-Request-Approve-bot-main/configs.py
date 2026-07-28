@@ -34,16 +34,16 @@ from os import path, getenv
 import os, time 
 
 class Config:
-    API_ID = int(getenv("API_ID", "32547937"))
-    API_HASH = getenv("API_HASH", "09645ea3a99f758b06284786e83bf402")
-    BOT_TOKEN = getenv("BOT_TOKEN", "8878688243:AAE2M42wynPAmqCJUs8B2HOVbZnoAewFxV4")
+    API_ID = int(getenv("API_ID", ""))
+    API_HASH = getenv("API_HASH", "")
+    BOT_TOKEN = getenv("BOT_TOKEN", "")
  
     FORCE_SUB = int(getenv("FORCE_SUB", "-1001819787652"))
-    ADMIN = list(map(int, getenv("ADMIN", "7731457540").split()))
+    ADMIN = list(map(int, getenv("ADMIN", "").split()))
     LOG_CHANNEL = int(os.environ.get("LOG_CHANNEL", "None")) if os.environ.get("LOG_CHANNEL") else None
     
     # database configs
-    DB_URL = os.environ.get("DB_URL", "mongodb+srv://ravann7499_db_user:OMgaE6aVS0SIeJww@cluster0.ft6wwlq.mongodb.net/?appName=Cluster0")
+    DB_URL = os.environ.get("DB_URL", "")
     DB_NAME = os.environ.get("DB_NAME", "mewdb")
     
     #web response 
