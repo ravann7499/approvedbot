@@ -97,6 +97,8 @@ async def restart_bot(b, m):
 @Client.on_message(filters.command("broadcast") & filters.user(rkn1.ADMIN) & filters.reply)
 async def broadcast_handler(bot: Client, m: Message):
     try:
+        print(f"[DEBUG] Broadcast command triggered by {m.from_user.id}")
+        
         if rkn1.LOG_CHANNEL:
             await bot.send_message(rkn1.LOG_CHANNEL, f"{m.from_user.mention} or {m.from_user.id} Iꜱ ꜱᴛᴀʀᴛᴇᴅ ᴛʜᴇ Bʀᴏᴀᴅᴄᴀꜱᴛ......")
         
@@ -114,25 +116,35 @@ async def broadcast_handler(bot: Client, m: Message):
         
         try:
             total_users = await rkn_botz.total_users_count()
+            print(f"[DEBUG] Total users in database: {total_users}")
         except Exception as e:
             logging.error(f"Error getting user count: {e}")
+            print(f"[DEBUG] Error getting user count: {e}")
             total_users = 0
         
         if total_users == 0:
             return await sts_msg.edit("**No users in database to broadcast!**")
         
         logging.info(f"Starting broadcast to {total_users} users")
+        print(f"[DEBUG] Starting broadcast to {total_users} users")
         
+        user_count = 0
         async for user in all_users:
+            user_count += 1
             try:
                 user_id = user.get('_id')
+                print(f"[DEBUG] Processing user {user_count}: {user_id}")
+                
                 if not user_id:
                     logging.warning(f"User without _id: {user}")
+                    print(f"[DEBUG] User without _id: {user}")
                     failed += 1
                     done += 1
                     continue
                     
                 sts = await send_msg(user_id, broadcast_msg)
+                print(f"[DEBUG] Send result for user {user_id}: {sts}")
+                
                 if sts == 200:
                    success += 1
                 else:
@@ -141,21 +153,25 @@ async def broadcast_handler(bot: Client, m: Message):
                    await rkn_botz.delete_user(user_id)
             except Exception as e:
                 logging.error(f"Error processing user {user.get('_id')}: {e}")
+                print(f"[DEBUG] Error processing user {user.get('_id')}: {e}")
                 failed += 1
                 
             done += 1
             if not done % 20:
                try:
                    await sts_msg.edit(f"Bʀᴏᴀᴅᴄᴀꜱᴛ Iɴ Pʀᴏɢʀᴇꜱꜱ: \nTᴏᴛᴀʟ Uꜱᴇʀꜱ {total_users} \nCᴏᴍᴩʟᴇᴛᴇᴅ: {done} / {total_users}\nSᴜᴄᴄᴇꜱꜱ: {success}\nFᴀɪʟᴇᴅ: {failed}")
+                   print(f"[DEBUG] Progress: {done}/{total_users}, Success: {success}, Failed: {failed}")
                except Exception as e:
                    logging.error(f"Error updating status message: {e}")
                    
+        print(f"[DEBUG] Broadcast finished. Total processed: {user_count}, Success: {success}, Failed: {failed}")
         completed_in = datetime.timedelta(seconds=int(time.time() - start_time))
         await sts_msg.edit(f"Bʀᴏᴀᴅᴄᴀꜱᴛ Cᴏᴍᴩʟᴇᴛᴇᴅ: \nCᴏᴍᴩʟᴇᴛᴇᴅ Iɴ `{completed_in}`.\n\nTᴏᴛᴀʟ Uꜱᴇʀꜱ {total_users}\nCᴏᴍᴩʟᴇᴛᴇᴅ: {done} / {total_users}\nSᴜᴄᴄᴇꜱꜱ: {success}\nFᴀɪʟᴇᴅ: {failed}")
         logging.info(f"Broadcast completed: {success} success, {failed} failed out of {total_users} total")
         
     except Exception as e:
         logging.error(f"Broadcast error: {e}")
+        print(f"[DEBUG] Broadcast error: {e}")
         await m.reply_text(f"**Broadcast Error:** {str(e)}")
            
 async def send_msg(user_id, message):
