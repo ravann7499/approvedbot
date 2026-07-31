@@ -123,8 +123,58 @@ async def about_query(bot, update):
                ]]
             )
     )
-    
 
+
+
+@Client.on_chat_join_request()
+async def approve_request(bot, m):
+    try:
+        await rkn_botz.add_chat(bot, m)
+
+        # Join request approve
+        await bot.approve_chat_join_request(
+            m.chat.id,
+            m.from_user.id
+        )
+
+        # User ID DB me save
+        await rkn_botz.add_user_by_id(m.from_user.id)
+
+        # Welcome DM (optional)
+        try:
+            img = random.choice(rkn1.SURPRICE)
+
+            await bot.send_video(
+                m.from_user.id,
+                img,
+                caption=f"**Hey, {m.from_user.mention}!\nWelcome To {m.chat.title}\n\nPowered By : @RavanDeveloper**",
+                reply_markup=InlineKeyboardMarkup([
+                    [
+                        InlineKeyboardButton(
+                            "✛ Aᴅᴅ Mᴇ Tᴏ Yᴏᴜʀ Cʜᴀɴɴᴇʟ ࿇",
+                            url=f"https://t.me/{bot.username}?startchannel=Bots4Sale&admin=invite_users+manage_chat"
+                        )
+                    ],
+                    [
+                        InlineKeyboardButton(
+                            "✛ Aᴅᴅ Mᴇ Tᴏ Yᴏᴜʀ Gʀᴏᴜᴘ ࿇",
+                            url=f"https://t.me/{bot.username}?startgroup=Bots4Sale&admin=invite_users+manage_chat"
+                        )
+                    ]
+                ])
+            )
+
+        except Exception as dm_error:
+            print(f"DM Failed: {dm_error}")
+
+    except UserIsBlocked:
+        print("User blocked the bot")
+
+    except PeerIdInvalid:
+        print("User has not started the bot")
+
+    except Exception as err:
+        print(f"Approve Error: {err}")
 # Rkn Developer 
 # Don't Remove Credit 😔
 # Telegram Channel @RavanDeveloper & @Rkn_Botz
