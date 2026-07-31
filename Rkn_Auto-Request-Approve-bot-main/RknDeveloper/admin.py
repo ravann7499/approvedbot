@@ -1,14 +1,14 @@
-# (c) @RavanDeveloperr
+# (c) @RknDeveloperr
 # Rkn Developer 
 # Don't Remove Credit 😔
-# Telegram Channel @RavanDeveloper & @Rkn_Botz
-# Developer @RavanDeveloperr
+# Telegram Channel @RknDeveloper & @Rkn_Botz
+# Developer @RknDeveloperr
 # Special Thanks To (https://github.com/JayMahakal98)
 # Update Channel @Digital_Botz & @DigitalBotz_Support
 
 """
 Apache License 2.0
-Copyright (c) 2022 @RavanDeveloper
+Copyright (c) 2022 @RknDeveloper
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -44,13 +44,8 @@ from configs import rkn1
 
 @Client.on_message(filters.command(["stats", "status"]) & filters.user(rkn1.ADMIN))
 async def get_stats(bot, message):
-    try:
-        total_users = await rkn_botz.total_users_count()
-        total_chats = await rkn_botz.total_chats_count()
-    except Exception as e:
-        logging.error(f"Database error in stats: {e}")
-        return await message.reply(f"**Database Error:** {str(e)}")
-    
+    total_users = await rkn_botz.total_users_count()
+    total_chats = await rkn_botz.total_chats_count()
     uptime = time.strftime("%Hh%Mm%Ss", time.gmtime(time.time() - bot.uptime))    
     start_t = time.time()
     rkn = await message.reply('**ᴘʀᴏᴄᴇssɪɴɢ.....**')    
@@ -96,8 +91,55 @@ async def restart_bot(b, m):
     
 @Client.on_message(filters.command("broadcast") & filters.user(rkn1.ADMIN) & filters.reply)
 async def broadcast_handler(bot: Client, m: Message):
+    await bot.send_message(rkn1.LOG_CHANNEL, f"{m.from_user.mention} or {m.from_user.id} Iꜱ ꜱᴛᴀʀᴛᴇᴅ ᴛʜᴇ Bʀᴏᴀᴅᴄᴀꜱᴛ......")
+    all_users = await rkn_botz.get_all_users()
+    broadcast_msg = m.reply_to_message
+    sts_msg = await m.reply_text("Bʀᴏᴀᴅᴄᴀꜱᴛ Sᴛᴀʀᴛᴇᴅ..!") 
+    done = 0
+    failed = 0
+    success = 0
+    start_time = time.time()
+    total_users = await rkn_botz.total_users_count()
+    async for user in all_users:
+        sts = await send_msg(user['_id'], broadcast_msg)
+        if sts == 200:
+           success += 1
+        else:
+           failed += 1
+        if sts == 400:
+           await rkn_botz.delete_user(user['_id'])
+        done += 1
+        if not done % 20:
+           await sts_msg.edit(f"Bʀᴏᴀᴅᴄᴀꜱᴛ Iɴ Pʀᴏɢʀᴇꜱꜱ: \nTᴏᴛᴀʟ Uꜱᴇʀꜱ {total_users} \nCᴏᴍᴩʟᴇᴛᴇᴅ: {done} / {total_users}\nSᴜᴄᴄᴇꜱꜱ: {success}\nFᴀɪʟᴇᴅ: {failed}")
+    completed_in = datetime.timedelta(seconds=int(time.time() - start_time))
+    await sts_msg.edit(f"Bʀᴏᴀᴅᴄᴀꜱᴛ Cᴏᴍᴩʟᴇᴛᴇᴅ: \nCᴏᴍᴩʟᴇᴛᴇᴅ Iɴ `{completed_in}`.\n\nTᴏᴛᴀʟ Uꜱᴇʀꜱ {total_users}\nCᴏᴍᴩʟᴇᴛᴇᴅ: {done} / {total_users}\nSᴜᴄᴄᴇꜱꜱ: {success}\nFᴀɪʟᴇᴅ: {failed}")
+           
+async def send_msg(user_id, message):
     try:
-        print(f"[DEBUG] Broadcast command triggered by {m.from_user.id}")
+        await message.copy(chat_id=int(user_id))
+        return 200
+    except FloodWait as e:
+        await asyncio.sleep(e.value)
+        return send_msg(user_id, message)
+    except InputUserDeactivated:
+        logger.info(f"{user_id} : Dᴇᴀᴄᴛɪᴠᴀᴛᴇᴅ")
+        return 400
+    except UserIsBlocked:
+        logger.info(f"{user_id} : Bʟᴏᴄᴋᴇᴅ Tʜᴇ Bᴏᴛ")
+        return 400
+    except PeerIdInvalid:
+        logger.info(f"{user_id} : Uꜱᴇʀ Iᴅ Iɴᴠᴀʟɪᴅ")
+        return 400
+    except Exception as e:
+        logger.error(f"{user_id} : {e}")
+        return 500
+        
+
+# Rkn Developer 
+# Don't Remove Credit 😔
+# Telegram Channel @RknDeveloper & @Rkn_Botz
+# Developer @RknDeveloperr
+# Update Channel @Digital_Botz & @DigitalBotz_Support        print(f"[DEBUG] Broadcast command triggered by {m.from_user.id}")
         
         if rkn1.LOG_CHANNEL:
             await bot.send_message(rkn1.LOG_CHANNEL, f"{m.from_user.mention} or {m.from_user.id} Iꜱ ꜱᴛᴀʀᴛᴇᴅ ᴛʜᴇ Bʀᴏᴀᴅᴄᴀꜱᴛ......")
